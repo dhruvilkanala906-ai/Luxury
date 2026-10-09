@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KURO | Luxury 3D Manga Vault & Collector's Editions</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#08080c',
+                        gold: {
+                            300: '#f6e05e',
+                            400: '#ecc94b',
+                            500: '#d4af37',
+                            600: '#b78a28',
+                            700: '#8c6819',
+                        },
+                        crimson: {
+                            500: '#ff2a5f',
+                            600: '#e01e4c',
+                        },
+                        cardDark: 'rgba(18, 18, 26, 0.75)'
+                    },
+                    fontFamily: {
+                        cinzel: ['Cinzel', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'gold-glow': '0 0 25px -5px rgba(212, 175, 55, 0.35)',
+                        'crimson-glow': '0 0 25px -5px rgba(255, 42, 95, 0.4)',
+                        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Three.js Library & OrbitControls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #08080c;
+            color: #f1f5f9;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism utility */
+        .glass-panel {
+            background: rgba(18, 18, 26, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+
+        .glass-panel-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-panel-hover:hover {
+            border-color: rgba(212, 175, 55, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px -10px rgba(212, 175, 55, 0.25);
+        }
+
+        /* Gold Gradient Text */
+        .gold-text {
+            background: linear-gradient(135deg, #FFF099 0%, #D4AF37 50%, #997819 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #08080c;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e1e2d;
+            border-radius: 4px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d4af37;
+        }
+
+        /* Shimmer effect for promo code badge */
+        .shimmer {
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0) 100%);
+            background-size: 200% 100%;
+            animation: shimmer 2.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        /* Pulsing Glow Animation */
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+        .animate-pulse-glow {
+            animation: pulse-glow 3s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="selection:bg-gold-500 selection:text-black">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-20 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- Announcement Bar -->
+    <div class="bg-gradient-to-r from-obsidian via-gold-700/40 to-obsidian border-b border-gold-500/20 text-xs py-2 px-4 text-center tracking-widest text-gold-300 font-cinzel flex items-center justify-center gap-3">
+        <span class="inline-block w-2 h-2 rounded-full bg-gold-400 animate-ping"></span>
+        <span>EXCLUSIVE FESTIVE OFFER: FREE EXPRESS SHIPPING ACROSS INDIA OVER ₹1,999</span>
+        <span class="hidden md:inline">• USE CODE <strong class="text-white bg-gold-600/50 px-2 py-0.5 rounded border border-gold-400">LUXURY20</strong> FOR 20% OFF</span>
+    </div>
+
+    <!-- Header / Navigation -->
+    <header class="sticky top-0 z-40 glass-panel border-b border-white/10 px-4 lg:px-8 py-3.5 transition-all">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold-400 to-gold-700 flex items-center justify-center shadow-gold-glow group-hover:scale-105 transition-transform">
+                    <i class="fa-solid font-cinzel text-obsidian text-xl font-black">黒</i>
+                </div>
+                <div>
+                    <span class="font-cinzel text-xl md:text-2xl font-black tracking-wider text-white flex items-center gap-1">
+                        KURO <span class="gold-text text-sm font-normal">VAULT</span>
+                    </span>
+                    <span class="text-[9px] uppercase tracking-widest text-gray-400 block -mt-1">Luxury Manga Atelier</span>
+                </div>
+            </a>
+
+            <!-- Search Bar -->
+            <div class="hidden md:flex flex-1 max-w-md mx-6 relative">
+                <input type="text" id="search-input" placeholder="Search by anime title, author, volume or genre..." 
+                    class="w-full bg-black/50 text-sm text-gray-200 placeholder-gray-500 pl-10 pr-4 py-2.5 rounded-full border border-gold-500/20 focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500 transition-all">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-gray-500 text-sm"></i>
+                <button id="search-clear" class="hidden absolute right-3.5 top-3 text-gray-400 hover:text-white text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Action Controls -->
+            <div class="flex items-center gap-4">
+                <!-- Currency Indicator -->
+                <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-500/10 border border-gold-500/30 text-xs font-semibold text-gold-300">
+                    <i class="fa-solid fa-indian-rupee-sign"></i>
+                    <span>INR (₹)</span>
+                </div>
+
+                <!-- Wishlist Quick Icon -->
+                <button class="relative p-2.5 rounded-full hover:bg-white/5 text-gray-300 hover:text-gold-400 transition-colors" title="Wishlist">
+                    <i class="fa-regular fa-heart text-lg"></i>
+                    <span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-crimson-500"></span>
+                </button>
+
+                <!-- Cart Button -->
+                <button id="cart-toggle-btn" class="relative bg-gradient-to-r from-gold-500 to-gold-600 text-obsidian font-bold px-4 py-2.5 rounded-full flex items-center gap-2.5 shadow-gold-glow hover:opacity-95 transition-all transform active:scale-95">
+                    <i class="fa-solid fa-bag-shopping text-base"></i>
+                    <span class="hidden sm:inline font-cinzel text-xs tracking-wider uppercase">Cart</span>
+                    <span id="cart-count-badge" class="bg-obsidian text-gold-300 text-xs w-5 h-5 rounded-full flex items-center justify-center font-extrabold border border-gold-400/50">0</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Search Bar -->
+        <div class="mt-3 md:hidden relative">
+            <input type="text" id="search-input-mobile" placeholder="Search mangas..." 
+                class="w-full bg-black/50 text-sm text-gray-200 placeholder-gray-500 pl-10 pr-4 py-2 rounded-full border border-gold-500/20 focus:border-gold-500 focus:outline-none">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-gray-500 text-sm"></i>
+        </div>
+    </header>
+
+    <!-- Hero Section with Three.js 3D Interactive Manga Showcase -->
+    <section class="relative min-h-[85vh] flex items-center justify-center px-4 lg:px-8 py-12 overflow-hidden">
+        <!-- Ambient Glowing Background Spheres -->
+        <div class="absolute top-10 left-10 w-96 h-96 bg-gold-500/10 rounded-full blur-[120px] pointer-events-none animate-pulse-glow"></div>
+        <div class="absolute bottom-10 right-10 w-96 h-96 bg-crimson-500/10 rounded-full blur-[140px] pointer-events-none animate-pulse-glow" style="animation-delay: 1.5s;"></div>
+
+        <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center z-10">
+            <!-- Left Copy Column -->
+            <div class="lg:col-span-6 space-y-6 text-center lg:text-left">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-panel border border-gold-500/30 text-xs font-semibold text-gold-300 uppercase tracking-widest">
+                    <i class="fa-solid fa-gem text-gold-400"></i> Authentic Japanese Imports & Deluxe Hardcovers
+                </div>
+
+                <h1 class="font-cinzel text-4xl sm:text-5xl lg:text-6xl font-black leading-tight tracking-tight">
+                    IMMERSIVE <br>
+                    <span class="gold-text drop-shadow-md">3D MANGA</span> VAULT
+                </h1>
+
+                <p class="text-gray-400 text-base sm:text-lg max-w-xl mx-auto lg:mx-0 font-light leading-relaxed">
+                    Step into an exquisite sanctuary of collector's edition manga, official box sets, and rare hardcovers. Inspect books in hyper-detailed 3D before adding to your personal archive. Delivered nationwide in India.
+                </p>
+
+                <!-- Hero CTA Buttons -->
+                <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
+                    <a href="#manga-catalog" class="bg-gradient-to-r from-gold-500 via-gold-400 to-gold-600 text-obsidian font-bold px-8 py-4 rounded-full shadow-gold-glow hover:shadow-gold-500/50 hover:scale-105 transition-all text-sm font-cinzel tracking-wider uppercase flex items-center gap-3">
+                        <span>Explore Archive</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                    <button onclick="openFeatured3DModal()" class="glass-panel text-gray-200 hover:text-gold-300 font-semibold px-6 py-4 rounded-full border border-gold-500/30 hover:border-gold-400 transition-all text-sm flex items-center gap-2.5">
+                        <i class="fa-solid fa-cube text-gold-400 text-lg"></i>
+                        <span>Launch 3D Viewer</span>
+                    </button>
+                </div>
+
+                <!-- Stats / Guarantee Ticker -->
+                <div class="grid grid-cols-3 gap-4 pt-6 border-t border-white/10 max-w-md mx-auto lg:mx-0 text-left">
+                    <div>
+                        <span class="font-cinzel font-bold text-xl sm:text-2xl text-white block">100%</span>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Original Prints</span>
+                    </div>
+                    <div>
+                        <span class="font-cinzel font-bold text-xl sm:text-2xl text-gold-400 block">500+</span>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Series Titles</span>
+                    </div>
+                    <div>
+                        <span class="font-cinzel font-bold text-xl sm:text-2xl text-white block">₹0 GST</span>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Tax Included</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Interactive 3D Canvas Showcase -->
+            <div class="lg:col-span-6 relative flex flex-col items-center justify-center">
+                <div class="relative w-full max-w-lg aspect-square rounded-3xl glass-panel p-2 shadow-2xl border border-gold-500/30 overflow-hidden group">
+                    
+                    <!-- ThreeJS Canvas -->
+                    <canvas id="hero-3d-canvas" class="w-full h-full cursor-grab active:cursor-grabbing rounded-2xl"></canvas>
+
+                    <!-- Interactive Canvas Overlay Controls -->
+                    <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between glass-panel px-4 py-2.5 rounded-2xl border border-white/10 text-xs">
+                        <div class="flex items-center gap-2 text-gray-300">
+                            <i class="fa-solid fa-hand-pointer text-gold-400 animate-bounce"></i>
+                            <span class="font-medium">Drag to rotate 3D Manga</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button id="hero-3d-prev" class="w-8 h-8 rounded-full bg-black/60 hover:bg-gold-500 hover:text-black flex items-center justify-center transition-colors">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </button>
+                            <span id="hero-3d-title" class="font-cinzel font-bold text-gold-300 px-2">BERSERK VOL. 1</span>
+                            <button id="hero-3d-next" class="w-8 h-8 rounded-full bg-black/60 hover:bg-gold-500 hover:text-black flex items-center justify-center transition-colors">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Deluxe Badge Tag -->
+                    <div class="absolute top-4 left-4 bg-gradient-to-r from-gold-600 to-gold-400 text-obsidian text-xs font-black font-cinzel px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
+                        3D Interactive Preview
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Discount Voucher Ticker Banner -->
+    <section class="py-6 border-y border-gold-500/20 bg-gradient-to-r from-obsidian via-black to-obsidian px-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3 text-center md:text-left">
+                <div class="w-10 h-10 rounded-full bg-gold-500/10 border border-gold-400/40 flex items-center justify-center text-gold-400 text-lg">
+                    <i class="fa-solid fa-ticket"></i>
+                </div>
+                <div>
+                    <h3 class="font-cinzel font-bold text-white text-base">EXCLUSIVE MANGA VAULT COUPONS</h3>
+                    <p class="text-xs text-gray-400">Apply promo codes during checkout to claim instant discounts in ₹</p>
+                </div>
+            </div>
+
+            <!-- Coupon Cards Grid -->
+            <div class="flex flex-wrap items-center justify-center gap-3">
+                <!-- Coupon 1 -->
+                <div onclick="copyCouponCode('LUXURY20')" class="cursor-pointer group glass-panel hover:border-gold-400 px-3.5 py-2 rounded-xl flex items-center gap-3 transition-all relative overflow-hidden shimmer">
+                    <div class="text-left">
+                        <span class="block font-mono font-bold text-gold-300 text-sm tracking-widest group-hover:text-white">LUXURY20</span>
+                        <span class="block text-[10px] text-gray-400 uppercase">20% Off All Orders</span>
+                    </div>
+                    <i class="fa-regular fa-copy text-gold-400 text-xs group-hover:scale-125 transition-transform"></i>
+                </div>
+
+                <!-- Coupon 2 -->
+                <div onclick="copyCouponCode('MANGA500')" class="cursor-pointer group glass-panel hover:border-gold-400 px-3.5 py-2 rounded-xl flex items-center gap-3 transition-all relative overflow-hidden">
+                    <div class="text-left">
+                        <span class="block font-mono font-bold text-gold-300 text-sm tracking-widest group-hover:text-white">MANGA500</span>
+                        <span class="block text-[10px] text-gray-400 uppercase">Flat ₹500 Off (Above ₹2000)</span>
+                    </div>
+                    <i class="fa-regular fa-copy text-gold-400 text-xs group-hover:scale-125 transition-transform"></i>
+                </div>
+
+                <!-- Coupon 3 -->
+                <div onclick="copyCouponCode('OTAKU15')" class="cursor-pointer group glass-panel hover:border-gold-400 px-3.5 py-2 rounded-xl flex items-center gap-3 transition-all relative overflow-hidden">
+                    <div class="text-left">
+                        <span class="block font-mono font-bold text-gold-300 text-sm tracking-widest group-hover:text-white">OTAKU15</span>
+                        <span class="block text-[10px] text-gray-400 uppercase">15% Off First Order</span>
+                    </div>
+                    <i class="fa-regular fa-copy text-gold-400 text-xs group-hover:scale-125 transition-transform"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Manga Catalog Section -->
+    <main id="manga-catalog" class="max-w-7xl mx-auto px-4 lg:px-8 py-16">
+        
+        <!-- Section Title & Filters Bar -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6 border-b border-white/10 pb-6">
+            <div>
+                <span class="text-xs font-semibold text-gold-400 uppercase tracking-widest font-cinzel block mb-1">Curated Masterpieces</span>
+                <h2 class="font-cinzel text-3xl sm:text-4xl font-black text-white">THE MANGA ARCHIVE</h2>
+            </div>
+
+            <!-- Category Filter Buttons -->
+            <div id="category-filters" class="flex flex-wrap gap-2">
+                <button data-category="all" class="filter-btn active px-4 py-2 rounded-full text-xs font-semibold font-cinzel tracking-wider transition-all bg-gold-500 text-obsidian shadow-gold-glow">
+                    All Manga
+                </button>
+                <button data-category="shonen" class="filter-btn px-4 py-2 rounded-full text-xs font-semibold font-cinzel tracking-wider transition-all glass-panel text-gray-300 hover:text-gold-300 border border-gold-500/20">
+                    Shonen
+                </button>
+                <button data-category="seinen" class="filter-btn px-4 py-2 rounded-full text-xs font-semibold font-cinzel tracking-wider transition-all glass-panel text-gray-300 hover:text-gold-300 border border-gold-500/20">
+                    Seinen / Dark Fantasy
+                </button>
+                <button data-category="deluxe" class="filter-btn px-4 py-2 rounded-full text-xs font-semibold font-cinzel tracking-wider transition-all glass-panel text-gray-300 hover:text-gold-300 border border-gold-500/20">
+                    Deluxe Hardcover
+                </button>
+                <button data-category="boxsets" class="filter-btn px-4 py-2 rounded-full text-xs font-semibold font-cinzel tracking-wider transition-all glass-panel text-gray-300 hover:text-gold-300 border border-gold-500/20">
+                    Collector Box Sets
+                </button>
+            </div>
+        </div>
+
+        <!-- Sorting and Count Info Bar -->
+        <div class="flex items-center justify-between mb-8 text-xs text-gray-400">
+            <div>
+                Showing <span id="manga-count-display" class="text-gold-400 font-bold">12</span> Luxury Titles
+            </div>
+            <div class="flex items-center gap-3">
+                <label for="sort-select" class="hidden sm:inline uppercase tracking-wider font-semibold">Sort By:</label>
+                <select id="sort-select" class="bg-black/70 border border-gold-500/30 text-gray-200 text-xs rounded-lg px-3 py-1.5 focus:outline-none focus:border-gold-400">
+                    <option value="featured">Featured / Popular</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="rating">Highest Rated</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Manga Books Grid Dynamic Container -->
+        <div id="manga-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <!-- Dynamic JS injection here -->
+        </div>
+    </main>
+
+    <!-- Collector's Hardcover Spotlight Banner -->
+    <section class="max-w-7xl mx-auto px-4 lg:px-8 py-12">
+        <div class="relative rounded-3xl glass-panel border border-gold-500/40 p-8 lg:p-12 overflow-hidden shadow-2xl">
+            <!-- Background Accent Glow -->
+            <div class="absolute -right-20 -bottom-20 w-96 h-96 bg-gold-500/20 rounded-full blur-[100px] pointer-events-none"></div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+                <div class="lg:col-span-8 space-y-4">
+                    <span class="inline-block px-3 py-1 bg-crimson-500/20 border border-crimson-500/50 text-crimson-500 rounded-full text-xs font-bold font-cinzel tracking-widest uppercase">
+                        Masterpiece Spotlight
+                    </span>
+                    <h3 class="font-cinzel text-3xl sm:text-4xl font-black text-white">
+                        BERSERK DELUXE EDITION VOL. 1-14
+                    </h3>
+                    <p class="text-gray-300 text-sm leading-relaxed max-w-2xl font-light">
+                        Experience Kentaro Miura's dark fantasy epic in leather-bound, oversized hardcover editions. Features 3-in-1 volume collections with crisp black & white artwork printed on ultra-premium archival paper.
+                    </p>
+                    <div class="flex items-center gap-4 pt-2">
+                        <span class="font-cinzel font-black text-2xl text-gold-400">₹3,899</span>
+                        <span class="text-sm text-gray-500 line-through">₹4,999</span>
+                        <span class="bg-gold-500/20 text-gold-300 text-xs px-2.5 py-1 rounded border border-gold-400/40 font-bold">Save ₹1,100</span>
+                    </div>
+                </div>
+                <div class="lg:col-span-4 flex justify-center lg:justify-end">
+                    <button onclick="quickAddToCart('manga-1')" class="w-full sm:w-auto bg-gradient-to-r from-gold-500 to-gold-600 text-obsidian font-bold px-8 py-4 rounded-2xl shadow-gold-glow hover:scale-105 transition-transform text-sm font-cinzel tracking-wider uppercase flex items-center justify-center gap-3">
+                        <i class="fa-solid fa-cart-plus text-base"></i>
+                        <span>Claim Deluxe Edition</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Drawer Slide-Over Modal -->
+    <div id="cart-drawer" class="fixed inset-0 z-50 pointer-events-none transition-opacity duration-300 opacity-0">
+        <!-- Backdrop -->
+        <div id="cart-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"></div>
+
+        <!-- Drawer Content -->
+        <div id="cart-panel" class="absolute top-0 right-0 bottom-0 w-full max-w-md bg-obsidian border-l border-gold-500/30 p-6 flex flex-col justify-between shadow-2xl transform translate-x-full transition-transform duration-300 pointer-events-auto">
+            
+            <!-- Drawer Header -->
+            <div>
+                <div class="flex items-center justify-between pb-4 border-b border-white/10">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-gold-500/20 flex items-center justify-center text-gold-400">
+                            <i class="fa-solid fa-bag-shopping"></i>
+                        </div>
+                        <h3 class="font-cinzel text-xl font-bold text-white tracking-wide">YOUR MANGA CART</h3>
+                    </div>
+                    <button id="cart-close-btn" class="text-gray-400 hover:text-white p-2 text-lg">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Items List Container -->
+                <div id="cart-items-container" class="mt-4 space-y-4 max-h-[45vh] overflow-y-auto pr-1">
+                    <!-- Dynamic cart items rendered here -->
+                </div>
+            </div>
+
+            <!-- Drawer Footer / Pricing & Coupon -->
+            <div class="pt-4 border-t border-white/10 space-y-4">
+                
+                <!-- Discount Coupon Code Input -->
+                <div class="space-y-2">
+                    <label class="text-xs font-cinzel font-semibold text-gold-300 uppercase tracking-wider block">Apply Discount Coupon</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="coupon-input" placeholder="e.g. LUXURY20" 
+                            class="flex-1 bg-black/60 border border-gold-500/30 rounded-xl px-3.5 py-2 text-xs text-white uppercase placeholder-gray-500 focus:outline-none focus:border-gold-400">
+                        <button id="apply-coupon-btn" class="bg-gold-500 hover:bg-gold-400 text-obsidian font-bold text-xs px-4 py-2 rounded-xl transition-colors font-cinzel">
+                            Apply
+                        </button>
+                    </div>
+                    <p id="coupon-message" class="text-[11px] hidden font-medium"></p>
+                </div>
+
+                <!-- Price Summary Breakdowns -->
+                <div class="space-y-2 text-xs text-gray-300 pt-2 border-t border-white/5">
+                    <div class="flex justify-between">
+                        <span>Subtotal</span>
+                        <span id="cart-subtotal" class="font-mono text-white">₹0</span>
+                    </div>
+                    <div id="discount-row" class="flex justify-between text-gold-400 hidden">
+                        <span>Coupon Discount</span>
+                        <span id="cart-discount" class="font-mono">-₹0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Estimated Shipping (India)</span>
+                        <span id="cart-shipping" class="font-mono text-green-400">FREE</span>
+                    </div>
+                    <div class="flex justify-between text-base font-bold text-white pt-2 border-t border-white/10">
+                        <span class="font-cinzel">Total (INR)</span>
+                        <span id="cart-total" class="font-mono text-gold-400 text-lg">₹0</span>
+                    </div>
+                </div>
+
+                <!-- Checkout Button -->
+                <button id="checkout-btn" class="w-full bg-gradient-to-r from-gold-500 via-gold-400 to-gold-600 text-obsidian font-bold py-3.5 rounded-xl shadow-gold-glow hover:opacity-95 transition-all font-cinzel tracking-widest uppercase flex items-center justify-center gap-2">
+                    <span>Proceed to Checkout</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal Simulation -->
+    <div id="checkout-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden">
+        <div class="glass-panel border border-gold-500/40 rounded-3xl max-w-xl w-full p-6 sm:p-8 space-y-6 relative max-h-[90vh] overflow-y-auto">
+            
+            <button id="checkout-close-btn" class="absolute top-5 right-5 text-gray-400 hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="text-center space-y-2">
+                <div class="w-12 h-12 rounded-2xl bg-gold-500/20 border border-gold-400/40 text-gold-400 flex items-center justify-center mx-auto text-xl">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h3 class="font-cinzel text-2xl font-black text-white">LUXURY VAULT CHECKOUT</h3>
+                <p class="text-xs text-gray-400">Encrypted Indian Payment Gateway & Express Dispatch</p>
+            </div>
+
+            <!-- Simulated Form -->
+            <form id="checkout-form" onsubmit="handleCheckoutSubmit(event)" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] uppercase font-cinzel font-bold text-gold-300 mb-1">Full Name</label>
+                        <input type="text" required placeholder="e.g. Aarav Sharma" class="w-full bg-black/50 border border-gold-500/20 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-gold-400">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase font-cinzel font-bold text-gold-300 mb-1">Phone Number</label>
+                        <input type="tel" required placeholder="+91 98765 43210" class="w-full bg-black/50 border border-gold-500/20 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-gold-400">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] uppercase font-cinzel font-bold text-gold-300 mb-1">Shipping Address (India)</label>
+                    <textarea required rows="2" placeholder="House/Flat No., Street, Landmark, City, State" class="w-full bg-black/50 border border-gold-500/20 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-gold-400"></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] uppercase font-cinzel font-bold text-gold-300 mb-1">PIN Code</label>
+                        <input type="text" required placeholder="361001" maxlength="6" class="w-full bg-black/50 border border-gold-500/20 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-gold-400">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase font-cinzel font-bold text-gold-300 mb-1">Payment Method</label>
+                        <select class="w-full bg-black/50 border border-gold-500/20 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-gold-400">
+                            <option>UPI (GPay / PhonePe / Paytm)</option>
+                            <option>Credit / Debit Card</option>
+                            <option>Net Banking</option>
+                            <option>Cash on Delivery (COD)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Final Amount Display -->
+                <div class="bg-gold-500/10 border border-gold-500/30 p-4 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-gray-400 block">Total Payable Amount</span>
+                        <span id="checkout-final-amount" class="font-cinzel text-xl font-bold text-gold-400">₹0</span>
+                    </div>
+                    <div class="text-right text-[10px] text-gray-400">
+                        <i class="fa-solid fa-lock text-gold-400 mr-1"></i> 256-Bit SSL Secured
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-gold-500 to-gold-600 text-obsidian font-bold py-3.5 rounded-xl shadow-gold-glow hover:opacity-95 transition-all font-cinzel tracking-widest uppercase">
+                    Place Order Now
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Fullscreen 3D Manga Inspector Modal -->
+    <div id="inspector-3d-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="relative w-full max-w-4xl h-[80vh] glass-panel rounded-3xl border border-gold-500/40 p-4 flex flex-col justify-between overflow-hidden">
+            
+            <button onclick="closeFeatured3DModal()" class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black/60 text-gray-300 hover:text-white hover:bg-gold-500 hover:text-black flex items-center justify-center transition-all">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- 3D Viewport Title -->
+            <div class="absolute top-4 left-6 z-20 pointer-events-none">
+                <span class="text-[10px] font-cinzel font-bold text-gold-400 uppercase tracking-widest block">Interactive 3D Vault</span>
+                <h3 id="inspector-title" class="font-cinzel text-xl font-black text-white">MANGA INSPECTOR</h3>
+            </div>
+
+            <!-- Full Inspector Canvas -->
+            <canvas id="modal-3d-canvas" class="w-full h-full cursor-grab active:cursor-grabbing rounded-2xl"></canvas>
+
+            <!-- Controls overlay -->
+            <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 glass-panel px-6 py-3 rounded-full border border-gold-500/30 text-xs flex items-center gap-6">
+                <span class="text-gray-300 flex items-center gap-2">
+                    <i class="fa-solid fa-arrows-rotate text-gold-400"></i> Drag to Rotate
+                </span>
+                <span class="text-gray-300 flex items-center gap-2">
+                    <i class="fa-solid fa-magnifying-glass-plus text-gold-400"></i> Scroll to Zoom
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 bg-black py-12 px-4 lg:px-8">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 text-xs text-gray-400">
+            <div class="space-y-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded bg-gold-500 text-obsidian flex items-center justify-center font-bold font-cinzel">黒</div>
+                    <span class="font-cinzel text-lg font-bold text-white">KURO VAULT</span>
+                </div>
+                <p>India's premier luxury atelier for authentic Japanese manga prints and collector's box sets.</p>
+            </div>
+            <div>
+                <h4 class="font-cinzel font-bold text-white text-sm mb-3">CURATED GENRES</h4>
+                <ul class="space-y-2">
+                    <li><a href="#manga-catalog" class="hover:text-gold-300">Dark Fantasy & Seinen</a></li>
+                    <li><a href="#manga-catalog" class="hover:text-gold-300">Shonen Battle Classics</a></li>
+                    <li><a href="#manga-catalog" class="hover:text-gold-300">Cyberpunk & Sci-Fi</a></li>
+                    <li><a href="#manga-catalog" class="hover:text-gold-300">Hardcover Deluxe Editions</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-cinzel font-bold text-white text-sm mb-3">CUSTOMER CARE</h4>
+                <ul class="space-y-2">
+                    <li><a href="#" class="hover:text-gold-300">Track Order (India Post / Bluedart)</a></li>
+                    <li><a href="#" class="hover:text-gold-300">Authenticity Guarantee</a></li>
+                    <li><a href="#" class="hover:text-gold-300">Returns & Replacement Policy</a></li>
+                    <li><a href="#" class="hover:text-gold-300">Contact Concierge</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-cinzel font-bold text-white text-sm mb-3">ACCEPTED PAYMENTS</h4>
+                <div class="flex flex-wrap gap-2 text-lg text-gray-300 mb-3">
+                    <i class="fa-brands fa-google-pay hover:text-gold-400"></i>
+                    <i class="fa-solid fa-credit-card hover:text-gold-400"></i>
+                    <i class="fa-solid fa-building-columns hover:text-gold-400"></i>
+                    <i class="fa-solid fa-money-bill-1 hover:text-gold-400"></i>
+                </div>
+                <p class="text-[11px] text-gray-500">All prices expressed in Indian Rupees (INR ₹) with all applicable GST included.</p>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto pt-6 border-t border-white/5 text-center text-[11px] text-gray-600 font-cinzel">
+            &copy; 2026 KURO MANGA ATELIER. ALL RIGHTS RESERVED. HIGH-PRECISION 3D WEB SYSTEM.
+        </div>
+    </footer>
+
+    <script>
+        /* -------------------------------------------------------------------------
+         * MANGA DATABASE (All prices in INR ₹)
+         * ------------------------------------------------------------------------- */
+        const MANGA_DATABASE = [
+            {
+                id: 'manga-1',
+                title: 'Berserk Deluxe Edition Vol. 1',
+                genre: 'seinen',
+                price: 3899,
+                originalPrice: 4999,
+                rating: 5.0,
+                reviews: 428,
+                badge: 'Deluxe Leather',
+                author: 'Kentaro Miura',
+                coverColor: '#120b0d',
+                goldAccent: true,
+                image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80',
+                synopsis: 'The acclaimed adult dark fantasy manga now in 7x10 deluxe hardcover format.'
+            },
+            {
+                id: 'manga-2',
+                title: 'Chainsaw Man Vol. 1-11 Box Set',
+                genre: 'boxsets',
+                price: 7999,
+                originalPrice: 9999,
+                rating: 4.9,
+                reviews: 312,
+                badge: 'Complete Part 1',
+                author: 'Tatsuki Fujimoto',
+                coverColor: '#1a1829',
+                image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=600&q=80',
+                synopsis: 'Denji’s life as a devil hunter begins in this adrenaline-fueled manga phenomenon.'
+            },
+            {
+                id: 'manga-3',
+                title: 'Jujutsu Kaisen Vol. 0 to 22 Pack',
+                genre: 'shonen',
+                price: 11499,
+                originalPrice: 13999,
+                rating: 4.8,
+                reviews: 580,
+                badge: 'Collector Set',
+                author: 'Gege Akutami',
+                coverColor: '#0b1d2e',
+                image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=600&q=80',
+                synopsis: 'Cursed energy, sorcery battles, and high-stakes supernatural warfare.'
+            },
+            {
+                id: 'manga-4',
+                title: 'Vinland Saga Deluxe Hardcover 1',
+                genre: 'deluxe',
+                price: 2499,
+                originalPrice: 2999,
+                rating: 4.9,
+                reviews: 210,
+                badge: 'Hardcover',
+                author: 'Makoto Yukimura',
+                coverColor: '#1e241c',
+                image: 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&w=600&q=80',
+                synopsis: 'A Viking epic of revenge, honor, and redemption in Northern Europe.'
+            },
+            {
+                id: 'manga-5',
+                title: 'One Piece Box Set 1 (East Blue)',
+                genre: 'boxsets',
+                price: 15999,
+                originalPrice: 18999,
+                rating: 5.0,
+                reviews: 890,
+                badge: 'Vols 1-23 + Bonus',
+                author: 'Eiichiro Oda',
+                coverColor: '#2b1b11',
+                image: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&w=600&q=80',
+                synopsis: 'The legendary pirate journey begins! Includes exclusive booklet and double-sided poster.'
+            },
+            {
+                id: 'manga-6',
+                title: 'Demon Slayer Complete Box Set',
+                genre: 'boxsets',
+                price: 14499,
+                originalPrice: 16999,
+                rating: 4.9,
+                reviews: 640,
+                badge: 'Complete Series',
+                author: 'Koyoharu Gotouge',
+                coverColor: '#1a221f',
+                image: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=600&q=80',
+                synopsis: 'All 23 volumes of Tanjiro’s quest to cure his sister and slay demons.'
+            },
+            {
+                id: 'manga-7',
+                title: 'Tokyo Ghoul Monster Edition',
+                genre: 'seinen',
+                price: 3299,
+                originalPrice: 3999,
+                rating: 4.8,
+                reviews: 195,
+                badge: 'Omnibus',
+                author: 'Sui Ishida',
+                coverColor: '#280d16',
+                image: 'https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=600&q=80',
+                synopsis: 'Shy student Ken Kaneki undergoes a terrifying transformation in dark Tokyo.'
+            },
+            {
+                id: 'manga-8',
+                title: 'Attack on Titan Colossal Edition 1',
+                genre: 'deluxe',
+                price: 4199,
+                originalPrice: 4899,
+                rating: 4.9,
+                reviews: 320,
+                badge: 'Oversized Print',
+                author: 'Hajime Isayama',
+                coverColor: '#261b18',
+                image: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=600&q=80',
+                synopsis: 'Massive 7x10 inch edition containing volumes 1-5 with high-gloss pages.'
+            },
+            {
+                id: 'manga-9',
+                title: 'Monster Naoki Urasawa Perfect Ed. 1',
+                genre: 'seinen',
+                price: 1899,
+                originalPrice: 2299,
+                rating: 5.0,
+                reviews: 280,
+                badge: '2-in-1 Edition',
+                author: 'Naoki Urasawa',
+                coverColor: '#0f172a',
+                image: 'https://images.unsplash.com/photo-1495640388908-05fa85288e61?auto=format&fit=crop&w=600&q=80',
+                synopsis: 'Dr. Kenzo Tenma faces a psychological thriller masterpiece across Europe.'
+            },
+            {
+                id: 'manga-10',
+                title: 'Spy x Family Vol. 1-10 Bundle',
+                genre: 'shonen',
+                price: 5499,
+                originalPrice: 6500,
+                rating: 4.8,
+                reviews: 410,
+                badge: 'Bestseller',
+                author: 'Tatsuya Endo',
+                coverColor: '#0d2818',
+                image: 'https://images.unsplash.com/photo-1476275466078-4007374efbbe?auto=format&fit=crop&w=600&q=80',
+                synopsis: 'A spy, an assassin, and a telepath form a fake family for world peace!'
+            },
+            {
+                id: 'manga-11',
+                title: 'Death Note Black Edition Vol. 1',
+                genre: 'deluxe',
+                price: 1499,
+                originalPrice: 1799,
+                rating: 4.9,
+                reviews: 750,
+                badge: 'Black Trim Ed.',
+                author: 'Tsugumi Ohba',
+                coverColor: '#050505',
+                image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=600&q=80',
+                synopsis: 'Sleek black page edges containing 2 full volumes of the strategic rivalry.'
+            },
+            {
+                id: 'manga-12',
+                title: 'Bleach TYBW Soukatsusai Box',
+                genre: 'boxsets',
+                price: 12999,
+                originalPrice: 14999,
+                rating: 4.9,
+                reviews: 180,
+                badge: 'Import Box',
+                author: 'Tite Kubo',
+                coverColor: '#171a21',
+                image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=600&q=80',
+                synopsis: 'The Thousand-Year Blood War arc collected in premier hardboard sleeve.'
+            }
+        ];
+
+        /* -------------------------------------------------------------------------
+         * CART STATE MANAGEMENT
+         * ------------------------------------------------------------------------- */
+        let cart = [];
+        let activeCoupon = null;
+
+        const PROMO_CODES = {
+            'LUXURY20': { type: 'percent', value: 20, minSubtotal: 0, label: '20% Off Order' },
+            'MANGA500': { type: 'flat', value: 500, minSubtotal: 2000, label: 'Flat ₹500 Off' },
+            'OTAKU15':  { type: 'percent', value: 15, minSubtotal: 0, label: '15% Off Order' }
+        };
+
+        // Render Manga Grid
+        function renderMangaGrid(items) {
+            const gridContainer = document.getElementById('manga-grid');
+            document.getElementById('manga-count-display').textContent = items.length;
+
+            if (items.length === 0) {
+                gridContainer.innerHTML = `
+                    <div class="col-span-full text-center py-16 space-y-3">
+                        <i class="fa-solid fa-book-open text-4xl text-gray-600"></i>
+                        <p class="text-gray-400 font-cinzel">No mangas match your filter or query.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            gridContainer.innerHTML = items.map(manga => `
+                <div class="glass-panel glass-panel-hover rounded-2xl p-4 flex flex-col justify-between relative group overflow-hidden">
+                    
+                    <!-- Cover Image & Badge Container -->
+                    <div class="relative w-full aspect-[2/3] rounded-xl overflow-hidden mb-4 bg-black/40">
+                        <img src="${manga.image}" alt="${manga.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        
+                        <div class="absolute top-2 left-2 bg-obsidian/80 backdrop-blur-md text-gold-300 text-[10px] font-cinzel font-bold px-2.5 py-1 rounded-md border border-gold-500/30">
+                            ${manga.badge}
+                        </div>
+
+                        <!-- 3D Inspection Quick Button -->
+                        <button onclick="inspectManga3D('${manga.id}')" class="absolute bottom-3 right-3 bg-obsidian/90 hover:bg-gold-500 hover:text-obsidian text-gold-300 p-2.5 rounded-xl border border-gold-500/40 shadow-lg transition-all" title="Inspect in 3D Space">
+                            <i class="fa-solid fa-cube text-sm"></i>
+                        </button>
+                    </div>
+
+                    <!-- Details -->
+                    <div class="space-y-2 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between text-[11px] text-gray-400 mb-1">
+                                <span class="uppercase tracking-wider font-semibold">${manga.genre}</span>
+                                <span class="flex items-center text-gold-400 gap-1 font-bold">
+                                    <i class="fa-solid fa-star text-[10px]"></i> ${manga.rating} (${manga.reviews})
+                                </span>
+                            </div>
+                            
+                            <h3 class="font-cinzel font-bold text-white text-base leading-snug group-hover:text-gold-300 transition-colors line-clamp-1">
+                                ${manga.title}
+                            </h3>
+                            <p class="text-xs text-gray-400 line-clamp-2 mt-1 font-light">${manga.synopsis}</p>
+                        </div>
+
+                        <!-- Price and Add to Cart Button -->
+                        <div class="pt-3 border-t border-white/10 flex items-center justify-between gap-2 mt-3">
+                            <div>
+                                <div class="text-lg font-bold font-mono text-gold-400">₹${manga.price.toLocaleString('en-IN')}</div>
+                                <div class="text-[10px] text-gray-500 line-through">₹${manga.originalPrice.toLocaleString('en-IN')}</div>
+                            </div>
+
+                            <button onclick="quickAddToCart('${manga.id}')" class="bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-400 hover:to-gold-500 text-obsidian font-bold px-3.5 py-2 rounded-xl text-xs font-cinzel tracking-wider flex items-center gap-1.5 shadow-gold-glow transition-all active:scale-95">
+                                <i class="fa-solid fa-cart-plus"></i>
+                                <span>Add</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Add item to cart
+        function quickAddToCart(mangaId) {
+            const manga = MANGA_DATABASE.find(m => m.id === mangaId);
+            if (!manga) return;
+
+            const existingIndex = cart.findIndex(item => item.id === mangaId);
+            if (existingIndex > -1) {
+                cart[existingIndex].qty += 1;
+            } else {
+                cart.push({ ...manga, qty: 1 });
+            }
+
+            updateCartUI();
+            showToast(`Added "${manga.title}" to cart!`);
+        }
+
+        // Remove / Adjust Qty
+        function updateCartQty(mangaId, delta) {
+            const index = cart.findIndex(item => item.id === mangaId);
+            if (index === -1) return;
+
+            cart[index].qty += delta;
+            if (cart[index].qty <= 0) {
+                cart.splice(index, 1);
+            }
+
+            updateCartUI();
+        }
+
+        // Apply Discount Coupon
+        function applyCoupon() {
+            const input = document.getElementById('coupon-input').value.trim().toUpperCase();
+            const messageEl = document.getElementById('coupon-message');
+
+            if (!input) {
+                messageEl.textContent = 'Please enter a coupon code.';
+                messageEl.className = 'text-[11px] text-red-400 block';
+                return;
+            }
+
+            if (!PROMO_CODES[input]) {
+                messageEl.textContent = 'Invalid promo code.';
+                messageEl.className = 'text-[11px] text-red-400 block';
+                return;
+            }
+
+            const coupon = PROMO_CODES[input];
+            const subtotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+
+            if (subtotal < coupon.minSubtotal) {
+                messageEl.textContent = `Requires minimum subtotal of ₹${coupon.minSubtotal.toLocaleString('en-IN')}`;
+                messageEl.className = 'text-[11px] text-yellow-400 block';
+                return;
+            }
+
+            activeCoupon = { code: input, ...coupon };
+            messageEl.textContent = `Coupon "${input}" applied successfully!`;
+            messageEl.className = 'text-[11px] text-green-400 block';
+
+            updateCartUI();
+            showToast(`Promo ${input} Applied!`);
+        }
+
+        // Copy coupon code helper
+        function copyCouponCode(code) {
+            document.getElementById('coupon-input').value = code;
+            applyCoupon();
+        }
+
+        // Refresh Cart UI
+        function updateCartUI() {
+            const countBadge = document.getElementById('cart-count-badge');
+            const container = document.getElementById('cart-items-container');
+            const totalQty = cart.reduce((acc, item) => acc + item.qty, 0);
+            
+            countBadge.textContent = totalQty;
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-500 space-y-2">
+                        <i class="fa-solid fa-basket-shopping text-3xl"></i>
+                        <p class="text-xs font-cinzel">Your cart is currently empty.</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = cart.map(item => `
+                    <div class="glass-panel p-3 rounded-xl flex items-center justify-between gap-3 border border-white/10">
+                        <img src="${item.image}" class="w-12 h-16 object-cover rounded-lg">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-cinzel text-xs font-bold text-white truncate">${item.title}</h4>
+                            <p class="font-mono text-xs text-gold-400 font-bold mt-0.5">₹${(item.price * item.qty).toLocaleString('en-IN')}</p>
+                            <div class="flex items-center gap-2 mt-1.5">
+                                <button onclick="updateCartQty('${item.id}', -1)" class="w-5 h-5 rounded bg-black/60 text-gray-300 hover:text-white flex items-center justify-center text-xs">-</button>
+                                <span class="text-xs font-mono font-bold text-white">${item.qty}</span>
+                                <button onclick="updateCartQty('${item.id}', 1)" class="w-5 h-5 rounded bg-black/60 text-gray-300 hover:text-white flex items-center justify-center text-xs">+</button>
+                            </div>
+                        </div>
+                        <button onclick="updateCartQty('${item.id}', -${item.qty})" class="text-gray-500 hover:text-red-400 p-2 text-xs">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            // Subtotal Calculations
+            const subtotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+            document.getElementById('cart-subtotal').textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+
+            let discountAmount = 0;
+            if (activeCoupon) {
+                if (activeCoupon.type === 'percent') {
+                    discountAmount = Math.round((subtotal * activeCoupon.value) / 100);
+                } else if (activeCoupon.type === 'flat') {
+                    discountAmount = activeCoupon.value;
+                }
+                document.getElementById('discount-row').classList.remove('hidden');
+                document.getElementById('cart-discount').textContent = `-₹${discountAmount.toLocaleString('en-IN')}`;
+            } else {
+                document.getElementById('discount-row').classList.add('hidden');
+            }
+
+            const finalTotal = Math.max(0, subtotal - discountAmount);
+            document.getElementById('cart-total').textContent = `₹${finalTotal.toLocaleString('en-IN')}`;
+            document.getElementById('checkout-final-amount').textContent = `₹${finalTotal.toLocaleString('en-IN')}`;
+        }
+
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'glass-panel border-gold-500/50 text-white px-4 py-3 rounded-2xl shadow-gold-glow flex items-center gap-3 text-xs font-cinzel font-semibold transform translate-x-10 opacity-0 transition-all duration-300 pointer-events-auto';
+            toast.innerHTML = `
+                <div class="w-6 h-6 rounded-full bg-gold-500 text-obsidian flex items-center justify-center font-bold">
+                    <i class="fa-solid fa-check text-xs"></i>
+                </div>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-x-10', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('translate-x-10', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Canvas Texture Generator for realistic 3D Manga Covers
+        function generateMangaTextureCanvas(title, subtitle, bgColor, isGold = false) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 768;
+            const ctx = canvas.getContext('2d');
+
+            // Background
+            ctx.fillStyle = bgColor || '#121218';
+            ctx.fillRect(0, 0, 512, 768);
+
+            // Metallic/Gold Border Frame
+            ctx.strokeStyle = isGold ? '#D4AF37' : '#333344';
+            ctx.lineWidth = 12;
+            ctx.strokeRect(20, 20, 472, 728);
+
+            // Japanese Aesthetic Background Motif Kanji
+            ctx.fillStyle = isGold ? 'rgba(212, 175, 55, 0.08)' : 'rgba(255, 255, 255, 0.05)';
+            ctx.font = 'bold 220px serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('黒', 256, 460);
+
+            // Title Header
+            ctx.fillStyle = isGold ? '#F3E5AB' : '#FFFFFF';
+            ctx.font = 'bold 36px "Cinzel", serif';
+            ctx.fillText(title.toUpperCase(), 256, 120);
+
+            // Subtitle
+            ctx.fillStyle = isGold ? '#D4AF37' : '#A0A0B0';
+            ctx.font = '20px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText(subtitle || 'DELUXE HARDCOVER', 256, 160);
+
+            // Center Seal
+            ctx.beginPath();
+            ctx.arc(256, 340, 60, 0, Math.PI * 2);
+            ctx.fillStyle = isGold ? '#D4AF37' : '#ff2a5f';
+            ctx.fill();
+
+            ctx.fillStyle = '#08080c';
+            ctx.font = 'bold 32px "Cinzel", serif';
+            ctx.fillText('KURO', 256, 350);
+
+            // Bottom Volume Tag
+            ctx.fillStyle = isGold ? '#D4AF37' : '#FFFFFF';
+            ctx.font = 'bold 24px "Cinzel", serif';
+            ctx.fillText('COLLECTOR EDITION • VOL 1', 256, 680);
+
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        // Spine Texture Generator
+        function generateSpineTexture(title, isGold = false) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 128;
+            canvas.height = 768;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#0a0a0f';
+            ctx.fillRect(0, 0, 128, 768);
+
+            ctx.strokeStyle = isGold ? '#D4AF37' : '#333344';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(6, 6, 116, 756);
+
+            // Vertical Text rotation
+            ctx.save();
+            ctx.translate(64, 384);
+            ctx.rotate(Math.PI / 2);
+            ctx.fillStyle = isGold ? '#D4AF37' : '#FFFFFF';
+            ctx.font = 'bold 28px "Cinzel", serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(title, 0, 10);
+            ctx.restore();
+
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        let heroScene, heroCamera, heroRenderer, heroBookMesh, heroControls;
+        let heroIndex = 0;
+        const heroFeaturedBooks = [
+            { title: 'BERSERK', subtitle: 'DELUXE VOL 1', color: '#1a0b0e', gold: true },
+            { title: 'CHAINSAW MAN', subtitle: 'COLLECTOR BOX', color: '#0d1829', gold: false },
+            { title: 'JUJUTSU KAISEN', subtitle: 'CURSED ARCHIVE', color: '#0a1d18', gold: true },
+            { title: 'VINLAND SAGA', subtitle: 'HARDCOVER 1', color: '#241a0e', gold: true }
+        ];
+
+        function initHero3D() {
+            const canvas = document.getElementById('hero-3d-canvas');
+            const container = canvas.parentElement;
+
+            heroScene = new THREE.Scene();
+            heroCamera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+            heroCamera.position.set(0, 0, 7);
+
+            heroRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            heroRenderer.setSize(container.clientWidth, container.clientHeight);
+            heroRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
+            heroScene.add(ambientLight);
+
+            const goldPointLight = new THREE.PointLight(0xd4af37, 2, 50);
+            goldPointLight.position.set(5, 5, 5);
+            heroScene.add(goldPointLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(-5, 5, 5);
+            heroScene.add(directionalLight);
+
+            // Orbit Controls
+            heroControls = new THREE.OrbitControls(heroCamera, heroRenderer.domElement);
+            heroControls.enableDamping = true;
+            heroControls.dampingFactor = 0.05;
+            heroControls.enableZoom = false;
+
+            // Create Book Mesh
+            createHeroBookMesh(heroFeaturedBooks[0]);
+
+            // Animation Loop
+            function animate() {
+                requestAnimationFrame(animate);
+                if (heroBookMesh) {
+                    heroBookMesh.rotation.y += 0.005; // Soft idle rotation
+                }
+                heroControls.update();
+                heroRenderer.render(heroScene, heroCamera);
+            }
+            animate();
+
+            // Window Resize
+            window.addEventListener('resize', () => {
+                if (!container) return;
+                heroCamera.aspect = container.clientWidth / container.clientHeight;
+                heroCamera.updateProjectionMatrix();
+                heroRenderer.setSize(container.clientWidth, container.clientHeight);
+            });
+        }
+
+        function createHeroBookMesh(bookConfig) {
+            if (heroBookMesh) heroScene.remove(heroBookMesh);
+
+            // Book Box Geometry (Width, Height, Depth/Spine Thickness)
+            const geometry = new THREE.BoxGeometry(2.4, 3.4, 0.45);
+
+            const frontTex = generateMangaTextureCanvas(bookConfig.title, bookConfig.subtitle, bookConfig.color, bookConfig.gold);
+            const spineTex = generateSpineTexture(bookConfig.title, bookConfig.gold);
+
+            // Page Edge Texture (White pages with subtle dark lines)
+            const pageCanvas = document.createElement('canvas');
+            pageCanvas.width = 128;
+            pageCanvas.height = 128;
+            const pctx = pageCanvas.getContext('2d');
+            pctx.fillStyle = '#f5f0eb';
+            pctx.fillRect(0, 0, 128, 128);
+            pctx.fillStyle = '#ded9d3';
+            for (let i = 0; i < 128; i += 4) {
+                pctx.fillRect(0, i, 128, 1);
+            }
+            const pageTex = new THREE.CanvasTexture(pageCanvas);
+
+            const materials = [
+                new THREE.MeshStandardMaterial({ map: pageTex }), // Right side pages
+                new THREE.MeshStandardMaterial({ map: spineTex }), // Left side spine
+                new THREE.MeshStandardMaterial({ map: pageTex }), // Top side pages
+                new THREE.MeshStandardMaterial({ map: pageTex }), // Bottom side pages
+                new THREE.MeshStandardMaterial({ map: frontTex }), // Front cover
+                new THREE.MeshStandardMaterial({ color: bookConfig.color }) // Back cover
+            ];
+
+            heroBookMesh = new THREE.Mesh(geometry, materials);
+            heroBookMesh.rotation.y = -0.4;
+            heroBookMesh.rotation.x = 0.1;
+            heroScene.add(heroBookMesh);
+
+            document.getElementById('hero-3d-title').textContent = `${bookConfig.title} ${bookConfig.subtitle}`;
+        }
+
+        let modalScene, modalCamera, modalRenderer, modalBookMesh, modalControls;
+
+        function initModal3D() {
+            const canvas = document.getElementById('modal-3d-canvas');
+            const container = canvas.parentElement;
+
+            modalScene = new THREE.Scene();
+            modalCamera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+            modalCamera.position.set(0, 0, 6);
+
+            modalRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            modalRenderer.setSize(container.clientWidth, container.clientHeight);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+            modalScene.add(ambientLight);
+
+            const pointLight = new THREE.PointLight(0xd4af37, 2, 50);
+            pointLight.position.set(5, 5, 5);
+            modalScene.add(pointLight);
+
+            modalControls = new THREE.OrbitControls(modalCamera, modalRenderer.domElement);
+            modalControls.enableDamping = true;
+
+            function animateModal() {
+                requestAnimationFrame(animateModal);
+                modalControls.update();
+                modalRenderer.render(modalScene, modalCamera);
+            }
+            animateModal();
+        }
+
+        function inspectManga3D(mangaId) {
+            const manga = MANGA_DATABASE.find(m => m.id === mangaId);
+            if (!manga) return;
+
+            document.getElementById('inspector-title').textContent = manga.title.toUpperCase();
+            document.getElementById('inspector-3d-modal').classList.remove('hidden');
+
+            if (!modalScene) initModal3D();
+
+            if (modalBookMesh) modalScene.remove(modalBookMesh);
+
+            const geometry = new THREE.BoxGeometry(2.4, 3.4, 0.45);
+            const frontTex = generateMangaTextureCanvas(manga.title, manga.badge, manga.coverColor, true);
+            const spineTex = generateSpineTexture(manga.title, true);
+
+            const materials = [
+                new THREE.MeshStandardMaterial({ color: '#eae5df' }),
+                new THREE.MeshStandardMaterial({ map: spineTex }),
+                new THREE.MeshStandardMaterial({ color: '#eae5df' }),
+                new THREE.MeshStandardMaterial({ color: '#eae5df' }),
+                new THREE.MeshStandardMaterial({ map: frontTex }),
+                new THREE.MeshStandardMaterial({ color: manga.coverColor })
+            ];
+
+            modalBookMesh = new THREE.Mesh(geometry, materials);
+            modalScene.add(modalBookMesh);
+        }
+
+        function openFeatured3DModal() {
+            inspectManga3D('manga-1');
+        }
+
+        function closeFeatured3DModal() {
+            document.getElementById('inspector-3d-modal').classList.add('hidden');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // Render Initial Catalog
+            renderMangaGrid(MANGA_DATABASE);
+
+            // Hero 3D Navigation Controls
+            document.getElementById('hero-3d-next').addEventListener('click', () => {
+                heroIndex = (heroIndex + 1) % heroFeaturedBooks.length;
+                createHeroBookMesh(heroFeaturedBooks[heroIndex]);
+            });
+
+            document.getElementById('hero-3d-prev').addEventListener('click', () => {
+                heroIndex = (heroIndex - 1 + heroFeaturedBooks.length) % heroFeaturedBooks.length;
+                createHeroBookMesh(heroFeaturedBooks[heroIndex]);
+            });
+
+            // Initialize Three.js Hero
+            initHero3D();
+
+            // Cart Drawer Controls
+            const cartDrawer = document.getElementById('cart-drawer');
+            const cartPanel = document.getElementById('cart-panel');
+            const cartToggleBtn = document.getElementById('cart-toggle-btn');
+            const cartCloseBtn = document.getElementById('cart-close-btn');
+            const cartBackdrop = document.getElementById('cart-backdrop');
+
+            function openCart() {
+                cartDrawer.classList.remove('pointer-events-none', 'opacity-0');
+                cartPanel.classList.remove('translate-x-full');
+            }
+
+            function closeCart() {
+                cartDrawer.classList.add('pointer-events-none', 'opacity-0');
+                cartPanel.classList.add('translate-x-full');
+            }
+
+            cartToggleBtn.addEventListener('click', openCart);
+            cartCloseBtn.addEventListener('click', closeCart);
+            cartBackdrop.addEventListener('click', closeCart);
+
+            // Category Filtering
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => {
+                        b.classList.remove('bg-gold-500', 'text-obsidian', 'shadow-gold-glow');
+                        b.classList.add('glass-panel', 'text-gray-300');
+                    });
+                    btn.classList.add('bg-gold-500', 'text-obsidian', 'shadow-gold-glow');
+                    btn.classList.remove('glass-panel', 'text-gray-300');
+
+                    const category = btn.dataset.category;
+                    if (category === 'all') {
+                        renderMangaGrid(MANGA_DATABASE);
+                    } else {
+                        const filtered = MANGA_DATABASE.filter(m => m.genre === category);
+                        renderMangaGrid(filtered);
+                    }
+                });
+            });
+
+            // Search Filter
+            const searchInput = document.getElementById('search-input');
+            const searchInputMobile = document.getElementById('search-input-mobile');
+
+            function handleSearch(query) {
+                const term = query.toLowerCase().trim();
+                if (!term) {
+                    renderMangaGrid(MANGA_DATABASE);
+                    return;
+                }
+                const results = MANGA_DATABASE.filter(manga => 
+                    manga.title.toLowerCase().includes(term) ||
+                    manga.author.toLowerCase().includes(term) ||
+                    manga.genre.toLowerCase().includes(term)
+                );
+                renderMangaGrid(results);
+            }
+
+            searchInput.addEventListener('input', (e) => handleSearch(e.target.value));
+            searchInputMobile.addEventListener('input', (e) => handleSearch(e.target.value));
+
+            // Sorting
+            document.getElementById('sort-select').addEventListener('change', (e) => {
+                const val = e.target.value;
+                let sorted = [...MANGA_DATABASE];
+                if (val === 'price-low') sorted.sort((a, b) => a.price - b.price);
+                else if (val === 'price-high') sorted.sort((a, b) => b.price - a.price);
+                else if (val === 'rating') sorted.sort((a, b) => b.rating - a.rating);
+                renderMangaGrid(sorted);
+            });
+
+            // Coupon Button
+            document.getElementById('apply-coupon-btn').addEventListener('click', applyCoupon);
+
+            // Checkout Modal
+            const checkoutModal = document.getElementById('checkout-modal');
+            const checkoutBtn = document.getElementById('checkout-btn');
+            const checkoutCloseBtn = document.getElementById('checkout-close-btn');
+
+            checkoutBtn.addEventListener('click', () => {
+                if (cart.length === 0) {
+                    showToast("Your cart is empty!");
+                    return;
+                }
+                closeCart();
+                checkoutModal.classList.remove('hidden');
+            });
+
+            checkoutCloseBtn.addEventListener('click', () => {
+                checkoutModal.classList.add('hidden');
+            });
+        });
+
+        // Checkout submit simulation
+        function handleCheckoutSubmit(e) {
+            e.preventDefault();
+            document.getElementById('checkout-modal').classList.add('hidden');
+            cart = [];
+            activeCoupon = null;
+            updateCartUI();
+            showToast("Order placed successfully! Confirmation sent via SMS/Email.");
+        }
+    </script>
+</body>
+</html>
